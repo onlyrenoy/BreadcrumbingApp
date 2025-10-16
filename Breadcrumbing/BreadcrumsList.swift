@@ -12,66 +12,95 @@ struct BreadCrumb: Identifiable, Hashable {
     let title: String
 }
 
-var demoCrumbs = [BreadCrumb(title: "test1"),
-                  BreadCrumb(title: "test2")]
-
 struct BreadcrumsList: View {
     @Namespace var namespace
     @State var listOfBC: [BreadCrumb] = []
     @State var selectedBC: BreadCrumb?
     @State var showDetail = false
     @State var disableScroll = false
-
+    @State var text = ""
+    
+    @State var path: NavigationPath = .init()
+    
     var body: some View {
-        ZStack {
-            VStack {
-                ScrollView {
-                    ForEach(listOfBC) { bc in
-                        breadcrumbCell(bc)
-                    }
-                    .padding(.bottom, 120)
+        NavigationStack(path: $path) {
+            ZStack {
+                listOfBreadcrumbs()
+                
+                addButton()
+                
+                if showDetail {
+                    createBredcrumb()
                 }
-                .disabled(disableScroll)
-                .blur(radius: showDetail ? 2 : 0)
+            }
+        }
+        .navigationBarBackButtonHidden()
+    }
+    
+    fileprivate func breadcrumbCell(_ bc: BreadCrumb) -> VStack<some View> {
+        return VStack {
+            RoundedRectangle(cornerRadius: 10)
+                .frame(height: 110)
                 .overlay {
-                    if showDetail {
-                        Color.black.opacity(0.18)
-                            .ignoresSafeArea()
-                            .transition(.opacity)
-                            .allowsHitTesting(false)
-                    }
+                    Text(bc.title)
+                        .foregroundStyle(.white)
                 }
-            }
-            
-            VStack {
-                Spacer()
-                RoundedRectangle(cornerRadius: 20)
-                    .fill(.gray)
-                    .background(Color.clear)
-                    .frame(height: 80)
-                    .overlay {
-                        Text("✚")
-                            .foregroundStyle(.white)
-                            .font(.largeTitle)
+                .padding(.horizontal)
+                .onTapGesture {
+                    path.append("detail")
+                }
+                .navigationDestination(for: String.self) { val in
+                    ContentView()
+                }
+        }
+    }
+    
+    fileprivate func addButton() -> some View {
+        return VStack {
+            Spacer()
+            RoundedRectangle(cornerRadius: 20)
+                .fill(.gray)
+                .background(Color.clear)
+                .frame(height: 80)
+                .overlay {
+                    Text("✚")
+                        .foregroundStyle(.white)
+                        .font(.largeTitle)
+                }
+                .onTapGesture {
+                    withAnimation {
+                        showDetail = true
+                        disableScroll = true
                     }
-                    .onTapGesture {
-                        withAnimation {
-                            showDetail = true
-                            disableScroll = true
-                        }
-                        
-                    }
-                    .shadow(radius: 10)
-                    .padding(.horizontal, 20)
+                    
+                }
+                .shadow(radius: 10)
+                .padding(.horizontal, 20)
+        }
+        .matchedGeometryEffect(id: "AddBreadCrumb", in: namespace)
+    }
+    
+    fileprivate func listOfBreadcrumbs() -> VStack<some View> {
+        return VStack {
+            ScrollView {
+                ForEach(listOfBC) { bc in
+                    breadcrumbCell(bc)
+                }
+                .padding(.bottom, 120)
             }
-            .matchedGeometryEffect(id: "AddBreadCrumb", in: namespace)
-            
-            if showDetail {
-                createBredcrumb()
+            .disabled(disableScroll)
+            .blur(radius: showDetail ? 2 : 0)
+            .overlay {
+                if showDetail {
+                    Color.black.opacity(0.18)
+                        .ignoresSafeArea()
+                        .transition(.opacity)
+                        .allowsHitTesting(false)
+                }
             }
         }
     }
-    @State var text = ""
+
     fileprivate func createBredcrumb() -> some View {
         
         return VStack {
@@ -86,7 +115,9 @@ struct BreadcrumsList: View {
                             .padding()
                         HStack {
                             Button("OK") {
-                                listOfBC.append(BreadCrumb(title: text))
+                                if !text.isEmpty {
+                                    listOfBC.append(BreadCrumb(title: text))
+                                }
                                 withAnimation {
                                     text = ""
                                     showDetail = false
@@ -121,18 +152,7 @@ struct BreadcrumsList: View {
         .zIndex(1)
     }
     
-    fileprivate func breadcrumbCell(_ bc: BreadCrumb) -> VStack<some View> {
-        return VStack {
-            RoundedRectangle(cornerRadius: 10)
-                .frame(height: 110)
-                .overlay {
-                    Text(bc.title)
-                        .foregroundStyle(.white)
-                }
-                .padding(.horizontal)
-                .onTapGesture {}
-        }
-    }
+    
 }
 
 #Preview {
