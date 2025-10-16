@@ -6,6 +6,10 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		2385DF6A2EA0215700B4A603 /* SPConfetti in Frameworks */ = {isa = PBXBuildFile; productRef = 2385DF692EA0215700B4A603 /* SPConfetti */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXContainerItemProxy section */
 		2385DF372EA00FD500B4A603 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -52,6 +56,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				2385DF6A2EA0215700B4A603 /* SPConfetti in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -78,6 +83,7 @@
 				2385DF282EA00FD300B4A603 /* Breadcrumbing */,
 				2385DF392EA00FD500B4A603 /* BreadcrumbingTests */,
 				2385DF432EA00FD500B4A603 /* BreadcrumbingUITests */,
+				2385DF682EA0215700B4A603 /* Frameworks */,
 				2385DF272EA00FD300B4A603 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -90,6 +96,13 @@
 				2385DF402EA00FD500B4A603 /* BreadcrumbingUITests.xctest */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		2385DF682EA0215700B4A603 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Frameworks;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -112,6 +125,7 @@
 			);
 			name = Breadcrumbing;
 			packageProductDependencies = (
+				2385DF692EA0215700B4A603 /* SPConfetti */,
 			);
 			productName = Breadcrumbing;
 			productReference = 2385DF262EA00FD300B4A603 /* Breadcrumbing.app */;
@@ -195,6 +209,9 @@
 			);
 			mainGroup = 2385DF1D2EA00FD300B4A603;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				2385DF672EA0213B00B4A603 /* XCRemoteSwiftPackageReference "SPConfetti" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 2385DF272EA00FD300B4A603 /* Products */;
 			projectDirPath = "";
@@ -558,6 +575,25 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		2385DF672EA0213B00B4A603 /* XCRemoteSwiftPackageReference "SPConfetti" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/ivanvorobei/SPConfetti";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.4.2;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		2385DF692EA0215700B4A603 /* SPConfetti */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 2385DF672EA0213B00B4A603 /* XCRemoteSwiftPackageReference "SPConfetti" */;
+			productName = SPConfetti;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 2385DF1E2EA00FD300B4A603 /* Project object */;
 }
