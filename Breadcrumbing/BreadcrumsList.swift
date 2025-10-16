@@ -10,6 +10,7 @@ import SwiftUI
 struct BreadCrumb: Identifiable, Hashable {
     let id = UUID()
     let title: String
+    let count: Int = 0
 }
 
 struct BreadcrumsList: View {
@@ -18,7 +19,7 @@ struct BreadcrumsList: View {
     @State var selectedBC: BreadCrumb?
     @State var showDetail = false
     @State var disableScroll = false
-    @State var text = ""
+    @State var text = "r"
     
     @State var path: NavigationPath = .init()
     
@@ -34,7 +35,6 @@ struct BreadcrumsList: View {
                 }
             }
         }
-        .navigationBarBackButtonHidden()
     }
     
     fileprivate func breadcrumbCell(_ bc: BreadCrumb) -> VStack<some View> {
@@ -42,15 +42,22 @@ struct BreadcrumsList: View {
             RoundedRectangle(cornerRadius: 10)
                 .frame(height: 110)
                 .overlay {
-                    Text(bc.title)
-                        .foregroundStyle(.white)
+                    HStack {
+                        Text(bc.title)
+                            .foregroundStyle(.white)
+                            .padding(.leading)
+                        Spacer()
+                        Text("★")
+                            .foregroundStyle(Color(uiColor: SomeColors.gold))
+                            .padding(.trailing)
+                    }
                 }
                 .padding(.horizontal)
                 .onTapGesture {
                     path.append("detail")
                 }
                 .navigationDestination(for: String.self) { val in
-                    ContentView()
+                    ContentView(path: $path, titleText: bc.title)
                 }
         }
     }

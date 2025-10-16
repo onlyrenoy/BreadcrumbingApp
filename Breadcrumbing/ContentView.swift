@@ -17,11 +17,14 @@ enum SomeColors {
 
 struct ContentView: View {
     @Environment(\.scenePhase) private var scenePhase
+    @Binding var path: NavigationPath
+    
     @State private var ticker = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
     
     @ObservedObject var viewModel = BreadcrumbingViewModel()
     
     @State var showAlert = false
+    @State var titleText: String
     
     var body: some View {
         ZStack {
@@ -33,6 +36,10 @@ struct ContentView: View {
             }
             
             VStack {
+                Text(titleText.uppercased())
+                    .foregroundStyle(Color(uiColor: SomeColors.gold))
+                    .fontWeight(.bold)
+                    .font(.largeTitle)
                 Spacer()
                 Text(viewModel.timeString())
                     .font(.system(size: 56, weight: .bold, design: .rounded))
@@ -75,6 +82,20 @@ struct ContentView: View {
                     }
                 
             }
+            
+            VStack {
+                HStack {
+                    Spacer()
+                    Button("🅧") {
+                        path.removeLast()
+                    }
+                    .foregroundStyle(Color(uiColor: SomeColors.gold))
+                    .font(.system(size: 30))
+                    .padding(.trailing, 16)
+                    .padding(.top, 4)
+                }
+                Spacer()
+            }
         }
         .onAppear {
             // Restore persisted endDate if any
@@ -111,11 +132,10 @@ struct ContentView: View {
                 }
             }
         }
-        
-        
+        .navigationBarBackButtonHidden()
     }
 }
 
 #Preview {
-    ContentView()
+    ContentView(path: .constant(NavigationPath()), titleText:"Test")
 }
