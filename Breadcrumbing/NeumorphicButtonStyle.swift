@@ -16,7 +16,8 @@ struct NeuModifier: ViewModifier {
     /// Set your base surface once; use same color for screen background.
     var baseColorLight = Color.neuBackground // #E9EEF3
     var baseColorDark  = Color(red: 0.11, green: 0.12, blue: 0.14) // #1C1F24
-
+    var padding: Int
+    
     func body(content: Content) -> some View {
         let base = scheme == .dark ? baseColorDark : baseColorLight
 
@@ -25,7 +26,7 @@ struct NeuModifier: ViewModifier {
         let darkShadow  = (scheme == .dark ? Color.black.opacity(0.6)  : Color.black.opacity(0.2))
 
         return content
-            .padding(16)
+            .padding(0)
             .background(
                 RoundedRectangle(cornerRadius: cornerRadius, style: .continuous)
                     .fill(base)
@@ -92,8 +93,10 @@ struct NeuModifier: ViewModifier {
 
 extension View {
     func neu(_ style: NeuStyle,
-             cornerRadius: CGFloat = 18) -> some View {
-        modifier(NeuModifier(style: style, cornerRadius: cornerRadius))
+             cornerRadius: CGFloat = 18, padding: Int = 0) -> some View {
+        modifier(NeuModifier(style: style,
+                             cornerRadius: cornerRadius,
+                             padding: padding))
     }
 }
 

@@ -19,14 +19,11 @@ struct ContentView: View {
     @State var showAlert = false
     @State var titleText: String
     
+    var circleWidth: CGFloat = 130
+    
     var body: some View {
         ZStack {
             Color.neuBackground.ignoresSafeArea()
-            if viewModel.isRunning {
-                Color.init(uiColor: SomeColors.gray).ignoresSafeArea()
-            } else if viewModel.isRunning && viewModel.remaining == 0 {
-                Color(.systemBackground).ignoresSafeArea()
-            }
             
             VStack {
                 Text(titleText.uppercased())
@@ -36,14 +33,39 @@ struct ContentView: View {
                 
                 Spacer()
                 
+                Circle()
+                    .fill(Color.neuBackground)
+                    .neu(.raised,cornerRadius: circleWidth)
+                    .frame(width: circleWidth)
+                    .overlay {
+                        Circle()
+                            .stroke(Color.white ,lineWidth: 1)
+                    }
+                    .overlay(content: {
+                        // CircularItem(width, duration, didStart)
+                        CircularTimerWithDot(duration: TimeInterval(viewModel.totalSeconds),
+                                             isRunning: $viewModel.isRunning)
+                    })
+                
+                    .padding(.bottom, 30)
+                
+                
+                
                 Text(viewModel.timeString())
                     .font(.system(size: 56, weight: .bold, design: .rounded))
                     .monospacedDigit()
                     .padding(.horizontal)
                     .foregroundStyle(viewModel.isRunning ? Color.init(uiColor: SomeColors.darkBlue) : Color.init(uiColor: SomeColors.gold))
                     .neu(.raised)
+                    .overlay {
+                        RoundedRectangle(cornerRadius: 16)
+                            .stroke(Color.white, lineWidth: 0.5)
+                            .fill(Color.clear)
+                            
+                    }
+                    .shadow(color: .dropLight, radius: 15, x: -10, y: -10)
                     .padding(.bottom, 20)
-                
+                    
                 Button(action: viewModel.toggleTimer) {
                     Text(viewModel.isRunning ? "Cancel" : "Start")
                         .font(.title2.weight(.semibold))

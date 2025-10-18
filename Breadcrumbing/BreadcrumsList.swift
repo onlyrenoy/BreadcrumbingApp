@@ -143,8 +143,8 @@ struct BreadcrumsList: View {
                         Text("Breadcrumb")
                             .foregroundStyle(.black)
                         TextField("some", text: $text)
+                            .padding()
                             .neu(.raised)
-//                            .textFieldStyle(.roundedBorder)
                             .padding()
                         HStack {
                             Button("OK") {
@@ -159,6 +159,7 @@ struct BreadcrumsList: View {
                                     
                                 }
                             }
+                            .padding()
                             .neu(.convex)
                             Spacer()
                             Button("Cancel") {
@@ -168,6 +169,7 @@ struct BreadcrumsList: View {
                                     disableScroll = false
                                 }
                             }
+                            .padding()
                             .neu(.convex)
                         }
                         .padding()
