@@ -12,12 +12,18 @@ import AudioToolbox
 @MainActor
 class BreadcrumbingViewModel: ObservableObject {
     
-    @Published var totalSeconds: Int = 2// 5 * 60
-    @Published var remaining: Int = 2//5 * 60
+    @Published var totalSeconds: Int = 5 * 60
+    @Published var remaining: Int =  5 * 60
     @Published var isRunning: Bool = false
     @Published var endDate: Date? = nil
     
-    @Published var celebrations: [String] = []
+    @Published var celebrations: [String] = [] {
+        didSet {
+            celebrationCounter()
+            complexItem()
+        }
+    }
+    
     @Published var showConfetti = false
     
     @Published var timerDidEnd = false {
@@ -33,6 +39,36 @@ class BreadcrumbingViewModel: ObservableObject {
     }
     
     @Published var didCompleteCelebration = false
+    
+    var celebrationCount: String = ""
+    
+    func celebrationCounter() {
+        if self.celebrations.count.isMultiple(of: 5) {
+                celebrationCount.append("★")
+        }
+        
+        print(celebrationCount)
+    }
+    
+    @Published var fiveChances = ["", "", "", "", ""]
+    
+    func complexItem() {
+        let index = (celebrations.count - 1) % 5
+        fiveChances[index] = "✅"
+
+        if celebrations.count % 5 == 0 {
+            fiveChances = ["", "", "", "", ""]
+        }
+    }
+    
+    
+    func save() {
+        //save title
+        //save number of celebrations
+            //count number of celebrations and mod 5 for a star
+            //else
+            //number of celebrations
+    }
     
     // MARK: - UI Actions
     

@@ -8,27 +8,20 @@
 import SwiftUI
 import SPConfetti
 
-enum SomeColors {
-    static var gold: UIColor = UIColor(red: 0.99, green: 0.64, blue: 0.07, alpha: 1.00)
-    static var gray: UIColor = UIColor(red: 0.90, green: 0.90, blue: 0.90, alpha: 1.00)
-    static var darkBlue: UIColor = UIColor(red: 0.08, green: 0.13, blue: 0.24, alpha: 1.00)
-    static var bloodRed: UIColor = UIColor(red: 0.64, green: 0.09, blue: 0.10, alpha: 1.00)
-}
-
 struct ContentView: View {
     @Environment(\.scenePhase) private var scenePhase
     @Binding var path: NavigationPath
     
     @State private var ticker = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
     
-    @ObservedObject var viewModel = BreadcrumbingViewModel()
+    @EnvironmentObject var viewModel: BreadcrumbingViewModel
     
     @State var showAlert = false
     @State var titleText: String
     
     var body: some View {
         ZStack {
-            Color.init(uiColor: .black).ignoresSafeArea()
+            Color.neuBackground.ignoresSafeArea()
             if viewModel.isRunning {
                 Color.init(uiColor: SomeColors.gray).ignoresSafeArea()
             } else if viewModel.isRunning && viewModel.remaining == 0 {
@@ -40,12 +33,16 @@ struct ContentView: View {
                     .foregroundStyle(Color(uiColor: SomeColors.gold))
                     .fontWeight(.bold)
                     .font(.largeTitle)
+                
                 Spacer()
+                
                 Text(viewModel.timeString())
                     .font(.system(size: 56, weight: .bold, design: .rounded))
                     .monospacedDigit()
                     .padding(.horizontal)
                     .foregroundStyle(viewModel.isRunning ? Color.init(uiColor: SomeColors.darkBlue) : Color.init(uiColor: SomeColors.gold))
+                    .neu(.raised)
+                    .padding(.bottom, 20)
                 
                 Button(action: viewModel.toggleTimer) {
                     Text(viewModel.isRunning ? "Cancel" : "Start")
@@ -53,22 +50,61 @@ struct ContentView: View {
                         .padding(.horizontal, 28)
                         .padding(.vertical, 18)
                         .background(viewModel.isRunning ? Color.init(uiColor: SomeColors.gold) : Color.init(uiColor: SomeColors.darkBlue))
+                        
                         .clipShape(Capsule())
                         .foregroundStyle(viewModel.isRunning ? Color.init(uiColor: SomeColors.darkBlue) : Color.init(uiColor: SomeColors.gold))
+                        
                 }
+                
                 Spacer()
                 
+                Text(viewModel.celebrationCount)
+                    .foregroundStyle(Color(uiColor: SomeColors.gold))
+                    .font(.system(size: 40))
+                    .frame(height: 100)
                 HStack {
-                    Text(viewModel.celebrations.joined(separator: " "))
-                        .font(.system(size: 40))
-                        .padding()
-                        .confetti(isPresented: $viewModel.showConfetti,
-                                  animation: .fullWidthToDown,
-                                  particles: [.arc, .heart, .star],
-                                  duration: 3)
-                        .confettiParticle(\.velocity, 300)
+                    RoundedRectangle(cornerRadius: 8)
+                        .stroke(Color.white, lineWidth: 3)
+                        .fill(Color.neuBackground)
+                        .frame(height: 100)
+                        .frame(maxWidth: .infinity)
+                        .foregroundStyle(.white.opacity(0.4))
+                        .padding(.horizontal)
+                        .overlay {
+                            HStack(spacing: 20) {
+ 
+                                ForEach(viewModel.fiveChances, id: \.self) { val in
+                                    if val == "" {
+                                        RoundedRectangle(cornerRadius: 8)
+                                            .neu(.raised)
+                                            .frame(width: 50, height: 50)
+                                            .overlay {
+                                                RoundedRectangle(cornerRadius: 16)
+                                                    .fill(Color.neuBackground)
+                                                    .stroke(Color.white, lineWidth: 0.5)
+                                                    
+                                            }
+                                            .shadow(color: .dropLight, radius: 15, x: -10, y: -10)
+                                            
+                                    } else {
+                                        Text(val)
+                                            .font(.system(size: 48))
+                                            .frame(width: 50, height: 50)
+                                            .shadow(color: .dropLight, radius: 15, x: -10, y: -10)
+                                    }
+                                }
+                            }
+//                            .shadow(color: .dropShadow, radius: 15, x: 10, y: 10)
+//                            .shadow(color: .dropLight, radius: 15, x: -10, y: -10)
+                            .confetti(isPresented: $viewModel.showConfetti,
+                                      animation: .fullWidthToDown,
+                                      particles: [.arc, .heart, .star],
+                                      duration: 3)
+                            .confettiParticle(\.velocity, 300)
+                        }
                 }
-                .padding(.bottom)
+                .shadow(color: .dropShadow, radius: 15, x: 10, y: 10)
+                .shadow(color: .dropLight, radius: 15, x: -10, y: -10)
             }
             
             if viewModel.timerDidEnd {
@@ -137,5 +173,8 @@ struct ContentView: View {
 }
 
 #Preview {
+    @Previewable @StateObject var viewModel = BreadcrumbingViewModel()
     ContentView(path: .constant(NavigationPath()), titleText:"Test")
+        .environmentObject(viewModel)
+    
 }
