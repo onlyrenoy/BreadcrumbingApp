@@ -19,7 +19,7 @@ struct ContentView: View {
     @State var showAlert = false
     @State var titleText: String
     
-    var circleWidth: CGFloat = 130
+    var circleWidth: CGFloat = 230
     
     var body: some View {
         ZStack {
@@ -31,59 +31,39 @@ struct ContentView: View {
                     .fontWeight(.bold)
                     .font(.largeTitle)
                 
-                Spacer()
-                
-                Circle()
-                    .fill(Color.neuBackground)
-                    .neu(.raised,cornerRadius: circleWidth)
-                    .frame(width: circleWidth)
-                    .overlay {
-                        Circle()
-                            .stroke(Color.white ,lineWidth: 1)
-                    }
-                    .overlay(content: {
-                        // CircularItem(width, duration, didStart)
-                        CircularTimerWithDot(duration: TimeInterval(viewModel.totalSeconds),
-                                             isRunning: $viewModel.isRunning)
-                    })
-                
-                    .padding(.bottom, 30)
-                
-                
-                
-                Text(viewModel.timeString())
-                    .font(.system(size: 56, weight: .bold, design: .rounded))
-                    .monospacedDigit()
-                    .padding(.horizontal)
-                    .foregroundStyle(viewModel.isRunning ? Color.init(uiColor: SomeColors.darkBlue) : Color.init(uiColor: SomeColors.gold))
-                    .neu(.raised)
-                    .overlay {
-                        RoundedRectangle(cornerRadius: 16)
-                            .stroke(Color.white, lineWidth: 0.5)
-                            .fill(Color.clear)
-                            
-                    }
-                    .shadow(color: .dropLight, radius: 15, x: -10, y: -10)
-                    .padding(.bottom, 20)
-                    
-                Button(action: viewModel.toggleTimer) {
-                    Text(viewModel.isRunning ? "Cancel" : "Start")
-                        .font(.title2.weight(.semibold))
-                        .padding(.horizontal, 28)
-                        .padding(.vertical, 18)
-                        .background(viewModel.isRunning ? Color.init(uiColor: SomeColors.gold) : Color.init(uiColor: SomeColors.darkBlue))
-                        
-                        .clipShape(Capsule())
-                        .foregroundStyle(viewModel.isRunning ? Color.init(uiColor: SomeColors.darkBlue) : Color.init(uiColor: SomeColors.gold))
-                        
-                }
-                
-                Spacer()
-                
                 Text(viewModel.celebrationCount)
                     .foregroundStyle(Color(uiColor: SomeColors.gold))
                     .font(.system(size: 40))
-                    .frame(height: 100)
+                    .frame(height: 90)
+                
+                Circle()
+                    .stroke(Color.gray.opacity(0.05), lineWidth: 4)
+                    .frame(width: circleWidth + 40)
+                    .overlay {
+                        Circle()
+                            .fill(Color.neuBackground)
+                            .neu(.raised,cornerRadius: circleWidth)
+                            .frame(width: circleWidth)
+                            .overlay {
+                                Circle()
+                                    .stroke(Color.white ,lineWidth: 1)
+                            }
+                            .overlay{
+                                CircularTimerWithDot(larghezza: circleWidth,
+                                                     duration: TimeInterval(viewModel.remaining),
+                                                     isRunning: $viewModel.isRunning)
+                                .overlay {
+                                    Text(viewModel.timeString())
+                                        .font(.system(size: 56, weight: .bold, design: .rounded))
+                                        .monospacedDigit()
+                                        .padding(.horizontal)
+                                        .foregroundStyle(viewModel.isRunning ? Color.init(uiColor: SomeColors.darkBlue) : Color.init(uiColor: SomeColors.gold))
+                                }
+                            }
+                            
+                    }
+                    .padding(.bottom, 30)
+                
                 HStack {
                     RoundedRectangle(cornerRadius: 8)
                         .stroke(Color.white, lineWidth: 3)
@@ -101,12 +81,12 @@ struct ContentView: View {
                                             .neu(.raised)
                                             .frame(width: 50, height: 50)
                                             .overlay {
-                                                RoundedRectangle(cornerRadius: 16)
+                                                RoundedRectangle(cornerRadius: 8)
                                                     .fill(Color.neuBackground)
                                                     .stroke(Color.white, lineWidth: 0.5)
                                                     
                                             }
-                                            .shadow(color: .dropLight, radius: 15, x: -10, y: -10)
+                                            .shadow(color: .dropLight, radius: 15, x: -4, y: -4)
                                             
                                     } else {
                                         Text(val)
@@ -116,8 +96,6 @@ struct ContentView: View {
                                     }
                                 }
                             }
-//                            .shadow(color: .dropShadow, radius: 15, x: 10, y: 10)
-//                            .shadow(color: .dropLight, radius: 15, x: -10, y: -10)
                             .confetti(isPresented: $viewModel.showConfetti,
                                       animation: .fullWidthToDown,
                                       particles: [.arc, .heart, .star],
@@ -125,8 +103,31 @@ struct ContentView: View {
                             .confettiParticle(\.velocity, 300)
                         }
                 }
+                .shadow(color: .dropShadow, radius: 230, x: 10, y: 10)
+                .shadow(color: .dropLight, radius: 15, x: -10, y: -10)
+                
+                Spacer()
+                    
+                Button(action: viewModel.toggleTimer) {
+                    Text(viewModel.isRunning ? "Cancel" : "Start")
+                        .font(.title2.weight(.semibold))
+                        .frame(width: 180)
+//                        .padding(.horizontal, 28)
+                        .padding(.vertical, 18)
+                        .background(Color.neuBackground)
+                        
+                        .clipShape(Capsule())
+                        .foregroundStyle(viewModel.isRunning ? Color.init(uiColor: SomeColors.darkBlue) : Color.init(uiColor: SomeColors.gold))
+                        
+                }
+                .overlay{
+                    RoundedRectangle(cornerRadius: 30)
+                        .stroke(Color.white, lineWidth: 0.3)
+                }
                 .shadow(color: .dropShadow, radius: 15, x: 10, y: 10)
                 .shadow(color: .dropLight, radius: 15, x: -10, y: -10)
+                
+  
             }
             
             if viewModel.timerDidEnd {

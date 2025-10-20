@@ -9,7 +9,7 @@ import Combine
 
 struct CircularTimerWithDot: View {
     //My
-    var larghezza: CGFloat = 130
+    var larghezza: CGFloat
     @State var duration: TimeInterval
     
     
@@ -33,9 +33,14 @@ struct CircularTimerWithDot: View {
             ZStack {
                 // Track
                 Circle()
-                    .stroke(.gray.opacity(0.1), lineWidth: 16)
+                    .stroke(.gray.opacity(0.1), lineWidth: 12)
                     .overlay {
                         // Moving dot along the circumference
+                        Circle()
+                            .trim(from: 0, to: progress)
+                            .stroke(Color(uiColor: SomeColors.gold), style: StrokeStyle(lineWidth: 8, lineCap: .round))
+                            .rotationEffect(.degrees(-90))
+                            .animation(.linear(duration: tick), value: progress)
                         GeometryReader { geo in
                             let size = min(geo.size.width, geo.size.height)
                             let radius = size / 2
@@ -55,11 +60,11 @@ struct CircularTimerWithDot: View {
                                 .animation(.linear(duration: tick), value: progress)
                         }
                         .allowsHitTesting(false)
-
                     }
 
                             }
             .frame(width: larghezza)
+            
             .onChange(of: isRunning) { old, new in
                 if new {
                     start()
@@ -100,4 +105,4 @@ struct CircularTimerWithDot: View {
     }
 }
 
-#Preview { CircularTimerWithDot(duration: 10, isRunning: .constant(false)) }
+#Preview { CircularTimerWithDot(larghezza: 230, duration: 10, isRunning: .constant(false)) }

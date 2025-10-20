@@ -15,7 +15,7 @@ struct BreadCrumb: Identifiable, Hashable {
 
 extension Color {
     static let neuBackground = Color(hex: "f0f0f3")
-    static let dropShadow = Color(hex: "aeaec0").opacity(0.4)
+    static let dropShadow = Color(hex: "aeaec0").opacity(0.3)
     static let dropLight = Color(hex: "ffffff")
 }
 
@@ -34,9 +34,8 @@ struct BreadcrumsList: View {
     
     var body: some View {
         NavigationStack(path: $path) {
-            
             ZStack {
-                Color(hex: "#F0F0F3")
+                Color.neuBackground
                     .ignoresSafeArea()
                 listOfBreadcrumbs()
                 
@@ -52,8 +51,7 @@ struct BreadcrumsList: View {
     fileprivate func breadcrumbCell(_ bc: BreadCrumb) -> some View {
         return VStack {
             RoundedRectangle(cornerRadius: 10)
-                .fill(Color.neuBackground)
-                .neu(.raised)
+                .fill(Color.clear)
                 .frame(height: 110)
                 .overlay {
                     HStack {
@@ -66,12 +64,10 @@ struct BreadcrumsList: View {
                             .padding(.trailing)
                     }
                 }
-                
-                .padding(.horizontal)
-                
-                .onTapGesture {
+                .neuromorph(autoReset: true, onTapGesture: {
                     path.append("detail")
-                }
+                })
+                .padding(.horizontal)
                 .navigationDestination(for: String.self) { val in
                     ContentView(path: $path, titleText: bc.title)
                         .environmentObject(viewModel)
@@ -87,24 +83,21 @@ struct BreadcrumsList: View {
     fileprivate func addButton() -> some View {
         return VStack {
             Spacer()
-            RoundedRectangle(cornerRadius: 20)
-                .stroke(Color.white, lineWidth: 3)
-                .fill(Color.neuBackground)
+            RoundedRectangle(cornerRadius: 0)
+                .fill(Color.clear)
                 .frame(height: 80)
                 .overlay {
                     Text("✚")
                         .foregroundStyle(.black)
                         .font(.largeTitle)
+                    
                 }
-                .onTapGesture {
+                .neuromorph(autoReset: true, onTapGesture: {
                     withAnimation {
                         showDetail = true
                         disableScroll = true
                     }
-                    
-                }
-                .shadow(color: .dropShadow, radius: 15, x: 10, y: 10)
-                .shadow(color: .dropLight, radius: 15, x: -10, y: -10)
+                })
                 .foregroundColor(.primary)
                 .padding(.horizontal, 20)
         }
@@ -136,16 +129,18 @@ struct BreadcrumsList: View {
         
         return VStack {
             RoundedRectangle(cornerRadius: 20)
-                .stroke(Color.white, lineWidth: 3)
-                .fill(Color.neuBackground)
+                .fill(Color.clear)
                 .overlay {
                     VStack {
                         Text("Breadcrumb")
                             .foregroundStyle(.black)
                         TextField("some", text: $text)
                             .padding()
-                            .neu(.raised)
+                            .border(.background)
+                            .cornerRadius(20)
+                            .neuromorph(autoReset: true)
                             .padding()
+                        
                         HStack {
                             Button("OK") {
                                 if !text.isEmpty {
@@ -160,7 +155,9 @@ struct BreadcrumsList: View {
                                 }
                             }
                             .padding()
-                            .neu(.convex)
+                            .neuromorph()
+                            
+                            
                             Spacer()
                             Button("Cancel") {
                                 withAnimation {
@@ -170,7 +167,7 @@ struct BreadcrumsList: View {
                                 }
                             }
                             .padding()
-                            .neu(.convex)
+                            .neuromorph()
                         }
                         .padding()
                     }
@@ -183,12 +180,9 @@ struct BreadcrumsList: View {
                     }
                     
                 }
-                
-                
         }
-        .shadow(color: .dropShadow, radius: 15, x: 10, y: 10)
-        .shadow(color: .dropLight, radius: 15, x: -10, y: -10)
         .frame(height: 240)
+        .neuromorph()
         .matchedGeometryEffect(id: "AddBreadCrumb", in: namespace)
         .padding(.horizontal, 45)
         .zIndex(1)
