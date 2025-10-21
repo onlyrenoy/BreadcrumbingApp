@@ -18,7 +18,9 @@ struct ContentView: View {
     @State var showAlert = false
     @State var titleText: String
     
-    var circleWidth: CGFloat = 230
+    var circleWidth: CGFloat = 260
+    
+    @EnvironmentObject var route: Router
     
     var body: some View {
         ZStack {
@@ -26,6 +28,7 @@ struct ContentView: View {
             
             VStack {
                 Text(titleText.uppercased())
+                    .monospaced()
                     .foregroundStyle(Color(uiColor: SomeColors.gold))
                     .fontWeight(.bold)
                     .font(.largeTitle)
@@ -48,6 +51,7 @@ struct ContentView: View {
                                                      isRunning: $viewModel.isRunning)
                                 .overlay {
                                     Text(viewModel.timeString())
+                                        .monospaced()
                                         .font(.system(size: 56, weight: .bold, design: .rounded))
                                         .monospacedDigit()
                                         .padding(.horizontal)
@@ -96,6 +100,7 @@ struct ContentView: View {
                 Spacer()
             
                 Text(viewModel.isRunning ? "Cancel" : "Start")
+                    .monospaced()
                     .font(.title2.weight(.semibold))
                     .frame(width: 180)
                     .padding(.vertical, 18)
@@ -130,7 +135,7 @@ struct ContentView: View {
                 HStack {
                     Spacer()
                     Button("🅧") {
-//                        path.removeLast()
+                        route.path.removeLast()
                     }
                     .foregroundStyle(Color(uiColor: SomeColors.gold))
                     .font(.system(size: 30))
@@ -175,14 +180,13 @@ struct ContentView: View {
                 }
             }
         }
-        .navigationBarBackButtonHidden()
+        .navigationBarBackButtonHidden(true)
+        
     }
 }
 
 #Preview {
-    @Previewable @StateObject var viewModel = BreadcrumbingViewModel()
     ContentView(titleText:"Test")
-        .environmentObject(viewModel)
     
 }
 

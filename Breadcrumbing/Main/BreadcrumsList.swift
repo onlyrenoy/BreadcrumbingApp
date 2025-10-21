@@ -18,7 +18,14 @@ struct BreadcrumsList: View {
         ZStack {
             Color.neuBackground
                 .ignoresSafeArea()
-            listOfBreadcrumbs()
+            
+            if viewModel.listOfBC.isEmpty {
+                Text("Start your day".uppercased())
+                    .monospaced()
+            } else {
+                listOfBreadcrumbs()
+            }
+            
             
             addButton()
             
@@ -96,15 +103,16 @@ struct BreadcrumsList: View {
     }
 
     fileprivate func createBredcrumb() -> some View {
-        
         return VStack {
             RoundedRectangle(cornerRadius: 20)
                 .fill(Color.clear)
                 .overlay {
                     VStack {
-                        Text("Breadcrumb")
+                        Text("Breadcrumb".uppercased())
+                            .monospaced()
                             .foregroundStyle(.black)
-                        TextField("some", text: $viewModel.textfieldText)
+                        TextField("Add Breadcrumb", text: $viewModel.textfieldText)
+                            .monospaced()
                             .padding()
                             .border(.background)
                             .cornerRadius(20)
@@ -124,6 +132,8 @@ struct BreadcrumsList: View {
                                     
                                 }
                             }
+                            .monospaced()
+                            .tint(.black)
                             .padding()
                             .neuro()
                             
@@ -136,6 +146,8 @@ struct BreadcrumsList: View {
                                     viewModel.disableScroll = false
                                 }
                             }
+                            .monospaced()
+                            .tint(.red)
                             .padding()
                             .neuro()
                         }
