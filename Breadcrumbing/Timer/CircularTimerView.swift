@@ -35,34 +35,35 @@ struct CircularTimerWithDot: View {
                 Circle()
                     .stroke(.gray.opacity(0.1), lineWidth: 12)
                     .overlay {
-                        // Moving dot along the circumference
                         Circle()
                             .trim(from: 0, to: progress)
                             .stroke(Color(uiColor: SomeColors.gold), style: StrokeStyle(lineWidth: 8, lineCap: .round))
                             .rotationEffect(.degrees(-90))
                             .animation(.linear(duration: tick), value: progress)
+                        
                         GeometryReader { geo in
                             let size = min(geo.size.width, geo.size.height)
                             let radius = size / 2
                             // Convert progress [0,1] into angle in radians, starting at top (-90°)
                             let angle = Double(progress) * 2.0 * .pi - .pi/2
-
+                            
                             // Dot position
                             let x = radius + cos(angle) * (radius)  // -8 so the dot sits on the stroke
                             let y = radius + sin(angle) * (radius)
-
+                            
                             Circle()
                                 .foregroundStyle(Color.neuBackground)
                                 .frame(width: 16, height: 16)
-                                .neu(.raised)
+                                .neuro()
                                 .position(x: x, y: y)
-                                .shadow(radius: 2)
+                                .shadow(radius: 0.3)
                                 .animation(.linear(duration: tick), value: progress)
+                            
                         }
+                        
                         .allowsHitTesting(false)
                     }
-
-                            }
+            }
             .frame(width: larghezza)
             
             .onChange(of: isRunning) { old, new in
@@ -105,4 +106,4 @@ struct CircularTimerWithDot: View {
     }
 }
 
-#Preview { CircularTimerWithDot(larghezza: 230, duration: 10, isRunning: .constant(false)) }
+#Preview { CircularTimerWithDot(larghezza: 230, duration: 10, isRunning: .constant(true)) }

@@ -10,11 +10,10 @@ import SPConfetti
 
 struct ContentView: View {
     @Environment(\.scenePhase) private var scenePhase
-    @Binding var path: NavigationPath
     
     @State private var ticker = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
     
-    @EnvironmentObject var viewModel: BreadcrumbingViewModel
+    @StateObject var viewModel: BreadcrumbingViewModel = BreadcrumbingViewModel()
     
     @State var showAlert = false
     @State var titleText: String
@@ -42,13 +41,8 @@ struct ContentView: View {
                     .overlay {
                         Circle()
                             .fill(Color.neuBackground)
-                            .neu(.raised,cornerRadius: circleWidth)
                             .frame(width: circleWidth)
                             .overlay {
-                                Circle()
-                                    .stroke(Color.white ,lineWidth: 1)
-                            }
-                            .overlay{
                                 CircularTimerWithDot(larghezza: circleWidth,
                                                      duration: TimeInterval(viewModel.remaining),
                                                      isRunning: $viewModel.isRunning)
@@ -57,42 +51,37 @@ struct ContentView: View {
                                         .font(.system(size: 56, weight: .bold, design: .rounded))
                                         .monospacedDigit()
                                         .padding(.horizontal)
-                                        .foregroundStyle(viewModel.isRunning ? Color.init(uiColor: SomeColors.darkBlue) : Color.init(uiColor: SomeColors.gold))
+                                        .foregroundStyle(viewModel.isRunning ? Color.init(uiColor: SomeColors.gold) : Color.init(uiColor: SomeColors.darkBlue))
                                 }
+                                
                             }
+                            .neuro(concave: $viewModel.isRunning.inverted, cornerRadius: Int(circleWidth))
                             
                     }
+                    .neuro(concave: $viewModel.isRunning.inverted, cornerRadius: Int(circleWidth))
                     .padding(.bottom, 30)
                 
                 HStack {
                     RoundedRectangle(cornerRadius: 8)
                         .stroke(Color.white, lineWidth: 3)
                         .fill(Color.neuBackground)
+                        .neuro()
                         .frame(height: 100)
                         .frame(maxWidth: .infinity)
-                        .foregroundStyle(.white.opacity(0.4))
                         .padding(.horizontal)
                         .overlay {
                             HStack(spacing: 20) {
- 
-                                ForEach(viewModel.fiveChances, id: \.self) { val in
-                                    if val == "" {
+                                ForEach(viewModel.fiveChances.indices, id: \.self) { val in
+                                    if viewModel.fiveChances[val] == "" {
                                         RoundedRectangle(cornerRadius: 8)
-                                            .neu(.raised)
+                                            .fill(Color.neuBackground)
                                             .frame(width: 50, height: 50)
-                                            .overlay {
-                                                RoundedRectangle(cornerRadius: 8)
-                                                    .fill(Color.neuBackground)
-                                                    .stroke(Color.white, lineWidth: 0.5)
-                                                    
-                                            }
-                                            .shadow(color: .dropLight, radius: 15, x: -4, y: -4)
-                                            
+                                            .neuro(simpleConcave: true, cornerRadius: 13)
                                     } else {
-                                        Text(val)
+                                        Text(viewModel.fiveChances[val] )
                                             .font(.system(size: 48))
                                             .frame(width: 50, height: 50)
-                                            .shadow(color: .dropLight, radius: 15, x: -10, y: -10)
+                                            .neuro()
                                     }
                                 }
                             }
@@ -103,32 +92,27 @@ struct ContentView: View {
                             .confettiParticle(\.velocity, 300)
                         }
                 }
-                .shadow(color: .dropShadow, radius: 230, x: 10, y: 10)
-                .shadow(color: .dropLight, radius: 15, x: -10, y: -10)
                 
                 Spacer()
+            
+                Text(viewModel.isRunning ? "Cancel" : "Start")
+                    .font(.title2.weight(.semibold))
+                    .frame(width: 180)
+                    .padding(.vertical, 18)
+                    .background(Color.neuBackground)
                     
-                Button(action: viewModel.toggleTimer) {
-                    Text(viewModel.isRunning ? "Cancel" : "Start")
-                        .font(.title2.weight(.semibold))
-                        .frame(width: 180)
-//                        .padding(.horizontal, 28)
-                        .padding(.vertical, 18)
-                        .background(Color.neuBackground)
-                        
-                        .clipShape(Capsule())
-                        .foregroundStyle(viewModel.isRunning ? Color.init(uiColor: SomeColors.darkBlue) : Color.init(uiColor: SomeColors.gold))
-                        
-                }
-                .overlay{
-                    RoundedRectangle(cornerRadius: 30)
-                        .stroke(Color.white, lineWidth: 0.3)
-                }
-                .shadow(color: .dropShadow, radius: 15, x: 10, y: 10)
-                .shadow(color: .dropLight, radius: 15, x: -10, y: -10)
-                
-  
+                    .clipShape(Capsule())
+                    .onTapGesture {
+                        withAnimation { viewModel.toggleTimer() }
+                        let generator = UIImpactFeedbackGenerator(style: .light)
+                        generator.impactOccurred()
+                    }
+                    .foregroundStyle(viewModel.isRunning ? Color.init(uiColor: SomeColors.darkBlue) : Color.init(uiColor: SomeColors.gold))
+                    
+                    .neuro(concave: $viewModel.isRunning.inverted , cornerRadius: 40)
             }
+            
+            
             
             if viewModel.timerDidEnd {
                 CelebrationConfirmationView(isCelebtationComplete: $showAlert,
@@ -146,7 +130,7 @@ struct ContentView: View {
                 HStack {
                     Spacer()
                     Button("🅧") {
-                        path.removeLast()
+//                        path.removeLast()
                     }
                     .foregroundStyle(Color(uiColor: SomeColors.gold))
                     .font(.system(size: 30))
@@ -197,7 +181,16 @@ struct ContentView: View {
 
 #Preview {
     @Previewable @StateObject var viewModel = BreadcrumbingViewModel()
-    ContentView(path: .constant(NavigationPath()), titleText:"Test")
+    ContentView(titleText:"Test")
         .environmentObject(viewModel)
     
+}
+
+extension Binding where Value == Bool {
+    var inverted: Binding<Bool> {
+        Binding(
+            get: { !self.wrappedValue },
+            set: { self.wrappedValue = !$0 }
+        )
+    }
 }
