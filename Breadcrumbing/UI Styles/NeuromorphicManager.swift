@@ -41,7 +41,7 @@ struct Neuromorph: ViewModifier {
                         , lineWidth: 1)
                     .fill(Color.clear)
             }
-            .scaleEffect(self.didPress ? 0.95: 1)
+//            .scaleEffect(self.didPress ? 0.95: 1)
             .shadow(color: .dropShadow, radius: 15, x: 10, y: 10)
             .shadow(color: .neuBackground, radius: 15, x: -10, y: -10)
             

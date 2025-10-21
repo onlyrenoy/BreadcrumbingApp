@@ -24,4 +24,9 @@ class BreadcrumsListViewModel: ObservableObject {
     @Published var path: NavigationPath = NavigationPath()
     
     var celebrationCount: String = ""
+    
+    func showAddBreadcrumbAlert(_ val: Bool) {
+        showDetail = val
+        disableScroll = val
+    }
 }

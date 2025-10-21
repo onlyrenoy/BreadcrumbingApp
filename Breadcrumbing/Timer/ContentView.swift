@@ -59,10 +59,10 @@ struct ContentView: View {
                                 }
                                 
                             }
-                            .neuro(concave: $viewModel.isRunning.inverted, cornerRadius: Int(circleWidth))
+                            .neuro(concave: $viewModel.isRunning, cornerRadius: Int(circleWidth))
                             
                     }
-                    .neuro(concave: $viewModel.isRunning.inverted, cornerRadius: Int(circleWidth))
+                    .neuro(concave: $viewModel.isRunning, cornerRadius: Int(circleWidth))
                     .padding(.bottom, 30)
                 
                 HStack {
