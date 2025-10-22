@@ -12,6 +12,8 @@ struct BreadCrumbListView: View {
     @ObservedObject var viewModel: BreadcrumsListViewModel
     @EnvironmentObject var route: Router
     
+    @State private var refreshView = false
+    
     var body: some View {
         VStack {
             if viewModel.listOfBC.isEmpty {
@@ -20,15 +22,21 @@ struct BreadCrumbListView: View {
             } else {
                 ScrollView {
                     ForEach(viewModel.listOfBC, id: \.id) { bc in
-                        BreadCrumbCell(breadCrumb: bc, celebrationCount: viewModel.celebrationCount)
+                        BreadCrumbCell(breadCrumb: bc,
+                                       celebrationCount: bc.count)
                             .onTapGesture {
-                                route.push(.detail(title: bc.title))
+                                route.push(.detail(breadcrumb: bc))
                             }
                     }
+                    .id(refreshView)
                     .padding(.bottom, 120)
                 }
                 .disabled(viewModel.disableScroll)
             }
+        }
+        .onAppear {
+            refreshView.toggle()
+            viewModel.onAppear()
         }
     }
 }

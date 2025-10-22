@@ -16,7 +16,8 @@ struct ContentView: View {
     @StateObject var viewModel: BreadcrumbingViewModel = BreadcrumbingViewModel()
     
     @State var showAlert = false
-    @State var titleText: String
+    
+    @State var breadcrumb: BreadCrumb
     
     var circleWidth: CGFloat = 260
     
@@ -27,12 +28,11 @@ struct ContentView: View {
             Color.neuBackground.ignoresSafeArea()
             
             VStack {
-                Text(titleText.uppercased())
+                Text(breadcrumb.title.uppercased())
                     .monospaced()
                     .foregroundStyle(Color(uiColor: SomeColors.gold))
                     .fontWeight(.bold)
                     .font(.largeTitle)
-                
                 Text(viewModel.celebrationCount)
                     .foregroundStyle(Color(uiColor: SomeColors.gold))
                     .font(.system(size: 40))
@@ -94,6 +94,13 @@ struct ContentView: View {
                                       particles: [.arc, .heart, .star],
                                       duration: 3)
                             .confettiParticle(\.velocity, 300)
+//                            .onChange(of: viewModel.showConfetti) { oldValue, newValue in
+//                                if newValue == true {
+//                                    breadcrumb.count += 1
+//                                    
+//                                    print("count", breadcrumb.count)
+//                                }
+//                            }
                         }
                 }
                 
@@ -116,8 +123,6 @@ struct ContentView: View {
                     
                     .neuro(concave: $viewModel.isRunning.inverted , cornerRadius: 40)
             }
-            
-            
             
             if viewModel.timerDidEnd {
                 CelebrationConfirmationView(isCelebtationComplete: $showAlert,
@@ -146,6 +151,8 @@ struct ContentView: View {
             }
         }
         .onAppear {
+            BreadcrumsSaver.shared.currentBreadcrumb = breadcrumb
+            viewModel.celebrationCount = breadcrumb.count
             // Restore persisted endDate if any
             if let stored = UserDefaults.standard.object(forKey: "TimerEndDate") as? Date {
                 viewModel.endDate = stored
@@ -186,7 +193,7 @@ struct ContentView: View {
 }
 
 #Preview {
-    ContentView(titleText:"Test")
+    ContentView(breadcrumb: BreadCrumb(title: "Test"))
     
 }
 

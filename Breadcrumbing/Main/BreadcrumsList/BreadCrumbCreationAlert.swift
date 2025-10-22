@@ -4,8 +4,6 @@
 //
 //  Created by Renoy Chowdhury on 21/10/25.
 //
-
-
 import SwiftUI
 
 struct BreadCrumbCreationAlert: View {
@@ -33,12 +31,12 @@ struct BreadCrumbCreationAlert: View {
                             Button("OK") {
                                 if !viewModel.textfieldText.isEmpty {
                                     viewModel.listOfBC.append(BreadCrumb(title: viewModel.textfieldText))
+                                    BreadcrumsSaver.shared.saveToList(BreadCrumb(title: viewModel.textfieldText))
                                 }
                                 
                                 withAnimation {
                                     viewModel.textfieldText = ""
-                                    viewModel.showDetail = false
-                                    viewModel.disableScroll = false
+                                    viewModel.showAddBreadcrumbAlert(false)
                                     
                                 }
                             }
@@ -52,8 +50,7 @@ struct BreadCrumbCreationAlert: View {
                             Button("Cancel") {
                                 withAnimation {
                                     viewModel.textfieldText = ""
-                                    viewModel.showDetail = false
-                                    viewModel.disableScroll = false
+                                    viewModel.showAddBreadcrumbAlert(false)
                                 }
                             }
                             .monospaced()
@@ -67,8 +64,7 @@ struct BreadCrumbCreationAlert: View {
                 .onTapGesture {
                     withAnimation {
                         viewModel.textfieldText = ""
-                        viewModel.showDetail = false
-                        viewModel.disableScroll = false
+                        viewModel.showAddBreadcrumbAlert(false)
                     }
                     
                 }
@@ -83,5 +79,6 @@ struct BreadCrumbCreationAlert: View {
 
 #Preview {
     @Previewable @Namespace var ns
-    BreadCrumbCreationAlert(ns: ns, viewModel: BreadcrumsListViewModel())
+    BreadCrumbCreationAlert(ns: ns,
+                            viewModel: BreadcrumsListViewModel())
 }

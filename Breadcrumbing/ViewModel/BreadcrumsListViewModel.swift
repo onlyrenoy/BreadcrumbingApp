@@ -23,10 +23,24 @@ class BreadcrumsListViewModel: ObservableObject {
     
     @Published var path: NavigationPath = NavigationPath()
     
-    var celebrationCount: String = ""
+    init() {
+        listOfBC = BreadcrumsSaver.shared.listOfItems
+    }
+    
+    @State var celebrationCount: String = BreadcrumsSaver.shared.currentBreadcrumb?.count ?? ""
     
     func showAddBreadcrumbAlert(_ val: Bool) {
         showDetail = val
         disableScroll = val
+    }
+    
+    func onAppear() {
+        BreadcrumsSaver.shared.readFromSaved()
+        print("-------------------------")
+        print("saver list:\n", BreadcrumsSaver.shared.listOfItems)
+        print("///////////////////////")
+        print("just list:\n", listOfBC)
+        print("-------------------------")
+        listOfBC = BreadcrumsSaver.shared.listOfItems
     }
 }

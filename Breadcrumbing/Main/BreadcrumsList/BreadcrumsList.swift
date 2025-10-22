@@ -35,6 +35,9 @@ struct BreadcrumsList: View {
                 BreadCrumbCreationAlert(ns: namespace, viewModel: viewModel)
             }
         }
+        .onAppear {
+            viewModel.onAppear()
+        }
     }
 }
 

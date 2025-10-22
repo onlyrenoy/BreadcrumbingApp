@@ -12,8 +12,8 @@ import AudioToolbox
 @MainActor
 class BreadcrumbingViewModel: ObservableObject {
     
-    @Published var totalSeconds: Int = 5 * 60
-    @Published var remaining: Int =  5 * 60
+    @Published var totalSeconds: Int = 2// 5 * 60
+    @Published var remaining: Int = 2// 5 * 60
     @Published var isRunning: Bool = false
     @Published var endDate: Date? = nil
     
@@ -40,11 +40,15 @@ class BreadcrumbingViewModel: ObservableObject {
     
     @Published var didCompleteCelebration = false
     
-    var celebrationCount: String = ""
+    @Published var celebrationCount: String = ""
     
     func celebrationCounter() {
         if self.celebrations.count.isMultiple(of: 5) {
                 celebrationCount.append("★")
+            if var bc = BreadcrumsSaver.shared.currentBreadcrumb {
+                bc.count = celebrationCount
+                BreadcrumsSaver.shared.update(bc)
+            }
         }
         
         print(celebrationCount)

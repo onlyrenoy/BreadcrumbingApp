@@ -8,8 +8,8 @@
 
 import SwiftUI
 
-struct BreadCrumb: Identifiable, Hashable {
-    let id = UUID()
+struct BreadCrumb: Codable, Identifiable, Hashable {
+    var id = UUID()
     let title: String
-    let count: Int = 0
+    var count: String = ""
 }
