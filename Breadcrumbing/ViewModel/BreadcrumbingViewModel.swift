@@ -12,8 +12,8 @@ import AudioToolbox
 @MainActor
 class BreadcrumbingViewModel: ObservableObject {
     
-    @Published var totalSeconds: Int = 2// 5 * 60
-    @Published var remaining: Int = 2// 5 * 60
+    @Published var totalSeconds: Int = 5 * 60
+    @Published var remaining: Int = 5 * 60
     @Published var isRunning: Bool = false
     @Published var endDate: Date? = nil
     
