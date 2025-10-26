@@ -43,4 +43,5 @@ struct BreadcrumsList: View {
 
 #Preview {
     BreadcrumsList()
+        .environmentObject(Router())
 }

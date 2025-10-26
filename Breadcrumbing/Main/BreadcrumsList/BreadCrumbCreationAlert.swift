@@ -69,7 +69,7 @@ struct BreadCrumbCreationAlert: View {
                     
                 }
         }
-        .frame(height: 240)
+        .frame(height: 300)
         .neuro()
         .matchedGeometryEffect(id: "AddBreadCrumb", in: ns)
         .padding(.horizontal, 45)

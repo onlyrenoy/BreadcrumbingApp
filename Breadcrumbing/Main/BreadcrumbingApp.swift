@@ -10,11 +10,15 @@ import SwiftUI
 @main
 struct BreadcrumbingApp: App {
     @StateObject var route: Router = Router()
+    @StateObject var vm = DailyArrayViewModel()
     
     var body: some Scene {
         WindowGroup {
             NavigationStack(path: $route.path) {
                 route.view(.home)
+                    .onAppear {
+                        vm.resetIfNewDay()
+                    }
                     .navigationDestination(for: Routes.self) { destination in
                         route.view(destination)
                     }
@@ -43,6 +47,11 @@ class BreadcrumsSaver {
             
             save()
         }
+    }
+    
+    func resetList() {
+        listOfItems = []
+        save()
     }
     
     fileprivate func save() {
