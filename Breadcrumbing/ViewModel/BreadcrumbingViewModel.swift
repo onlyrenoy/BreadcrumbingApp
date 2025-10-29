@@ -17,11 +17,17 @@ class BreadcrumbingViewModel: ObservableObject {
     @Published var isRunning: Bool = false
     @Published var endDate: Date? = nil
     
+    @Published var isRepCounter: Bool = false
+    
     @Published var celebrations: [String] = [] {
         didSet {
             celebrationCounter()
             complexItem()
         }
+    }
+    
+    init(isRepcounter: Bool = false) {
+        self.isRepCounter = isRepcounter
     }
     
     @Published var showConfetti = false

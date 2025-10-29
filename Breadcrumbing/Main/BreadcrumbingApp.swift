@@ -16,9 +16,6 @@ struct BreadcrumbingApp: App {
         WindowGroup {
             NavigationStack(path: $route.path) {
                 route.view(.home)
-                    .onAppear {
-                        vm.resetIfNewDay()
-                    }
                     .navigationDestination(for: Routes.self) { destination in
                         route.view(destination)
                     }

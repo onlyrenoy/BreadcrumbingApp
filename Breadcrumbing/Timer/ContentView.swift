@@ -23,105 +23,192 @@ struct ContentView: View {
     
     @EnvironmentObject var route: Router
     
+    
+    struct RepCounter {
+        var index: Int
+        var isSelected: Bool
+    }
+    
+    func createList() {
+        for item in 0..<50 {
+            reps.append(RepCounter(index: item, isSelected: false))
+        }
+    }
+    
+    @State var reps: [RepCounter] = []
+    @State var totalCount = 0
+    
     var body: some View {
         ZStack {
             Color.neuBackground.ignoresSafeArea()
-            
-            VStack {
-                Text(breadcrumb.title.uppercased())
-                    .monospaced()
-                    .foregroundStyle(Color(uiColor: SomeColors.gold))
-                    .fontWeight(.bold)
-                    .font(.largeTitle)
-                Text(viewModel.celebrationCount)
-                    .foregroundStyle(Color(uiColor: SomeColors.gold))
-                    .font(.system(size: 40))
-                    .frame(height: 90)
-                
-                Circle()
-                    .stroke(Color.gray.opacity(0.05), lineWidth: 4)
-                    .frame(width: circleWidth + 40)
-                    .overlay {
-                        Circle()
-                            .fill(Color.neuBackground)
-                            .frame(width: circleWidth)
-                            .overlay {
-                                CircularTimerWithDot(larghezza: circleWidth,
-                                                     duration: TimeInterval(viewModel.remaining),
-                                                     isRunning: $viewModel.isRunning)
-                                .overlay {
-                                    Text(viewModel.timeString())
-                                        .monospaced()
-                                        .font(.system(size: 56, weight: .bold, design: .rounded))
-                                        .monospacedDigit()
-                                        .padding(.horizontal)
-                                        .foregroundStyle(viewModel.isRunning ? Color.init(uiColor: SomeColors.gold) : Color.init(uiColor: SomeColors.darkBlue))
-                                }
-                                
-                            }
-                            .neuro(concave: $viewModel.isRunning, cornerRadius: Int(circleWidth))
-                            
-                    }
-                    .neuro(concave: $viewModel.isRunning, cornerRadius: Int(circleWidth))
-                    .padding(.bottom, 30)
-                
-                HStack {
-                    RoundedRectangle(cornerRadius: 8)
-                        .stroke(Color.white, lineWidth: 3)
-                        .fill(Color.neuBackground)
-                        .neuro()
-                        .frame(height: 100)
-                        .frame(maxWidth: .infinity)
-                        .padding(.horizontal)
-                        .overlay {
-                            HStack(spacing: 20) {
-                                ForEach(viewModel.fiveChances.indices, id: \.self) { val in
-                                    if viewModel.fiveChances[val] == "" {
-                                        RoundedRectangle(cornerRadius: 8)
-                                            .fill(Color.neuBackground)
-                                            .frame(width: 50, height: 50)
-                                            .neuro(simpleConcave: true, cornerRadius: 13)
-                                    } else {
-                                        Text(viewModel.fiveChances[val] )
-                                            .font(.system(size: 48))
-                                            .frame(width: 50, height: 50)
-                                            .neuro()
+                .onAppear {
+                    createList()
+                }
+            if !(viewModel.isRepCounter) {
+                VStack {
+                    Text(breadcrumb.title.uppercased())
+                        .monospaced()
+                        .foregroundStyle(Color(uiColor: SomeColors.gold))
+                        .fontWeight(.bold)
+                        .font(.largeTitle)
+                        Spacer()
+                    
+                    Text("\(totalCount)/50") //counter
+                        .monospaced()
+                        .foregroundStyle(Color(uiColor: SomeColors.gold))
+                        .fontWeight(.bold)
+                        .font(.largeTitle)
+                        Spacer()
+                    
+                    //serve un bool per aggiornamento item
+                    Grid(horizontalSpacing: 30, verticalSpacing: 15) {
+                        ForEach(reps.indices, id: \.self) { mainIndex in
+                            GridRow {
+                                ForEach(0..<5) { columnIndex in
+                                    let index = mainIndex * 5 + columnIndex
+                                    if index < reps.count {
+                                        Rectangle()
+                                            .fill(reps[index].isSelected ? .green : Color.neuBackground)
+                                            .frame(width: 40, height: 40)
+                                            .neuro(concave: $reps[index].isSelected, cornerRadius: 54)
                                     }
                                 }
                             }
-                            .confetti(isPresented: $viewModel.showConfetti,
-                                      animation: .fullWidthToDown,
-                                      particles: [.arc, .heart, .star],
-                                      duration: 3)
-                            .confettiParticle(\.velocity, 300)
-//                            .onChange(of: viewModel.showConfetti) { oldValue, newValue in
-//                                if newValue == true {
-//                                    breadcrumb.count += 1
-//                                    
-//                                    print("count", breadcrumb.count)
-//                                }
-//                            }
                         }
-                }
-                
-                Spacer()
-            
-                Text(viewModel.isRunning ? "Cancel" : "Start")
-                    .monospaced()
-                    .font(.title2.weight(.semibold))
-                    .frame(width: 180)
-                    .padding(.vertical, 18)
-                    .background(Color.neuBackground)
-                    
-                    .clipShape(Capsule())
-                    .onTapGesture {
-                        withAnimation { viewModel.toggleTimer() }
-                        let generator = UIImpactFeedbackGenerator(style: .light)
-                        generator.impactOccurred()
                     }
-                    .foregroundStyle(viewModel.isRunning ? Color.init(uiColor: SomeColors.darkBlue) : Color.init(uiColor: SomeColors.gold))
                     
-                    .neuro(concave: $viewModel.isRunning.inverted , cornerRadius: 40)
+                    HStack {
+                        Text("+")
+                            .padding()
+                            .onTapGesture {
+                                if totalCount == 50 { return }
+                                
+                                UINudgeSound.playTap()
+                                
+                                reps[totalCount].isSelected.toggle()
+                                totalCount += 1
+                                
+                                if totalCount == 50 {
+                                    viewModel.showConfetti.toggle()
+                                }
+                            }
+                    }
+                    .frame(height: 54)
+                    .frame(maxWidth: 54)
+                    .neuro(concave: .constant(true), cornerRadius: 54)
+                    .padding(.top, 30)
+                    .confetti(isPresented: $viewModel.showConfetti,
+                              animation: .fullWidthToDown,
+                              particles: [.arc, .heart, .star],
+                              duration: 3)
+                    .confettiParticle(\.velocity, 300)
+                    
+                }
+            } else {
+                VStack {
+                    Text(breadcrumb.title.uppercased())
+                        .monospaced()
+                        .foregroundStyle(Color(uiColor: SomeColors.gold))
+                        .fontWeight(.bold)
+                        .font(.largeTitle)
+                    Text(viewModel.celebrationCount)
+                        .foregroundStyle(Color(uiColor: SomeColors.gold))
+                        .font(.system(size: 40))
+                        .frame(height: 90)
+                    
+                    Circle()
+                        .stroke(Color.gray.opacity(0.05), lineWidth: 4)
+                        .frame(width: circleWidth + 40)
+                        .overlay {
+                            Circle()
+                                .fill(Color.neuBackground)
+                                .frame(width: circleWidth)
+                                .overlay {
+                                    CircularTimerWithDot(larghezza: circleWidth,
+                                                         duration: TimeInterval(viewModel.remaining),
+                                                         isRunning: $viewModel.isRunning)
+                                    .overlay {
+                                        Text(viewModel.timeString())
+                                            .monospaced()
+                                            .font(.system(size: 56, weight: .bold, design: .rounded))
+                                            .monospacedDigit()
+                                            .padding(.horizontal)
+                                            .foregroundStyle(viewModel.isRunning ? Color.init(uiColor: SomeColors.gold) : Color.init(uiColor: SomeColors.darkBlue))
+                                    }
+                                    
+                                }
+                                .neuro(concave: $viewModel.isRunning, cornerRadius: Int(circleWidth))
+                            
+                        }
+                        .neuro(concave: $viewModel.isRunning, cornerRadius: Int(circleWidth))
+                        .padding(.bottom, 30)
+                    
+                    HStack {
+                        RoundedRectangle(cornerRadius: 8)
+                            .stroke(Color.white, lineWidth: 3)
+                            .fill(Color.neuBackground)
+                            .neuro()
+                            .frame(height: 100)
+                            .frame(maxWidth: .infinity)
+                            .padding(.horizontal)
+                            .overlay {
+                                HStack(spacing: 20) {
+                                    ForEach(viewModel.fiveChances.indices, id: \.self) { val in
+                                        if viewModel.fiveChances[val] == "" {
+                                            RoundedRectangle(cornerRadius: 8)
+                                                .fill(Color.neuBackground)
+                                                .frame(width: 50, height: 50)
+                                                .neuro(simpleConcave: true, cornerRadius: 13)
+                                        } else {
+                                            Text(viewModel.fiveChances[val] )
+                                                .font(.system(size: 48))
+                                                .frame(width: 50, height: 50)
+                                                .neuro()
+                                        }
+                                    }
+                                }
+                                .confetti(isPresented: $viewModel.showConfetti,
+                                          animation: .fullWidthToDown,
+                                          particles: [.arc, .heart, .star],
+                                          duration: 3)
+                                .confettiParticle(\.velocity, 300)
+                                //                            .onChange(of: viewModel.showConfetti) { oldValue, newValue in
+                                //                                if newValue == true {
+                                //                                    breadcrumb.count += 1
+                                //
+                                //                                    print("count", breadcrumb.count)
+                                //                                }
+                                //                            }
+                            }
+                    }
+                    
+                    Spacer()
+                    
+                    Text(viewModel.isRunning ? "Cancel" : "Start")
+                        .monospaced()
+                        .font(.title2.weight(.semibold))
+                        .frame(width: 180)
+                        .padding(.vertical, 18)
+                        .background(Color.neuBackground)
+                    
+                        .clipShape(Capsule())
+                        .onTapGesture {
+                            withAnimation { viewModel.toggleTimer() }
+                            let generator = UIImpactFeedbackGenerator(style: .light)
+                            generator.impactOccurred()
+                        }
+                        .foregroundStyle(viewModel.isRunning ? Color.init(uiColor: SomeColors.darkBlue) : Color.init(uiColor: SomeColors.gold))
+                    
+                        .neuro(concave: $viewModel.isRunning.inverted , cornerRadius: 40)
+                    
+                    HStack {
+                        Text("+")
+                            .padding()
+                    }
+                    .frame(height: 54)
+                    .frame(maxWidth: 54)
+                    .neuro(concave: .constant(true), cornerRadius: 54)
+                }
             }
             
             if viewModel.timerDidEnd {
@@ -203,5 +290,22 @@ extension Binding where Value == Bool {
             get: { !self.wrappedValue },
             set: { self.wrappedValue = !$0 }
         )
+    }
+}
+
+
+import AudioToolbox
+
+enum UINudgeSound {
+    static var tap: SystemSoundID = {
+        guard let url = Bundle.main.url(forResource: "tap", withExtension: "wav") else { return 0 }
+        var id: SystemSoundID = 0
+        AudioServicesCreateSystemSoundID(url as CFURL, &id)
+        return id
+    }()
+
+    static func playTap() {
+        AudioServicesPlaySystemSound(tap)
+        // or with vibration (if available): AudioServicesPlayAlertSound(tap)
     }
 }

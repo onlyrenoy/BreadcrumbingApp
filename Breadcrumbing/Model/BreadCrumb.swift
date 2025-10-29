@@ -12,4 +12,5 @@ struct BreadCrumb: Codable, Identifiable, Hashable {
     var id = UUID()
     let title: String
     var count: String = ""
+    var repCount: Int?
 }
