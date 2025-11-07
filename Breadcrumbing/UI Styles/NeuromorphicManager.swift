@@ -20,7 +20,7 @@ struct Neuromorph: ViewModifier {
         content
             .onTapGesture {
 //                if !simple {
-                    onTapGesture?()
+//                    onTapGesture?()
                     withAnimation(.spring(duration: 0.2, bounce: 0.3, blendDuration: 0.1)) {
                         self.didPress.toggle()
                     }
@@ -41,7 +41,6 @@ struct Neuromorph: ViewModifier {
                         , lineWidth: 1)
                     .fill(Color.clear)
             }
-//            .scaleEffect(self.didPress ? 0.95: 1)
             .shadow(color: .dropShadow, radius: 15, x: 10, y: 10)
             .shadow(color: .neuBackground, radius: 15, x: -10, y: -10)
             
@@ -73,7 +72,7 @@ extension View {
     
 }
 
-struct NeuromorphicManager: View {
+struct NeuromorphicExamples: View {
     @State var didPress = false
     
     var body: some View {
@@ -104,10 +103,21 @@ struct NeuromorphicManager: View {
             .frame(maxWidth: .infinity)
             .neuro(simpleConcave: false, autoReset: false, cornerRadius: 100, onTapGesture: nil)
             .padding(.horizontal)
+            
+            VStack {
+                Text("Ooh")
+            }
+            .frame(height: 54)
+            .frame(maxWidth: .infinity)
+            .neuro(concave: $didPress)
+            .onTapGesture {
+                didPress.toggle()
+            }
+            .padding(.horizontal)
         }
     }
 }
 
 #Preview {
-    NeuromorphicManager()
+    NeuromorphicExamples()
 }

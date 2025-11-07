@@ -21,9 +21,9 @@ struct BreadCrumbListView: View {
                     .monospaced()
             } else {
                 ScrollView {
-                    ForEach(viewModel.listOfBC, id: \.id) { bc in
-                        BreadCrumbCell(breadCrumb: bc,
-                                       celebrationCount: bc.count)
+                    ForEach(viewModel.listOfBC, id: \.breadcrumb.id) { bc in
+                        BreadCrumbCell(breadCrumb: bc.breadcrumb,
+                                       celebrationCount: bc.breadcrumb.count)
                             .onTapGesture {
                                 route.push(.detail(breadcrumb: bc))
                             }

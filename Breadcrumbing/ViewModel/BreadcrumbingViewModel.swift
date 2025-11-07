@@ -14,10 +14,12 @@ class BreadcrumbingViewModel: ObservableObject {
     
     @Published var totalSeconds: Int = 5 * 60
     @Published var remaining: Int = 5 * 60
-    @Published var isRunning: Bool = false
+    @Published var isRunning: Bool = false {
+        didSet {
+            print("tapped here", #line)
+        }
+    }
     @Published var endDate: Date? = nil
-    
-    @Published var isRepCounter: Bool = false
     
     @Published var celebrations: [String] = [] {
         didSet {
@@ -26,8 +28,39 @@ class BreadcrumbingViewModel: ObservableObject {
         }
     }
     
+    func createList() {
+        for item in 0..<50 {
+            reps.append(RepCounter(index: item, isSelected: false))
+        }
+    }
+    
+    func repCounterUpdate() {
+        if totalCount == 50 { return }
+        
+        UINudgeSound.playTap()
+        
+        reps[totalCount].isSelected.toggle()
+        totalCount += 1
+        
+        if totalCount == 50 {
+            showConfetti.toggle()
+        }
+    }
+    
+    var isRepCounter: Bool
+    
+    @Published var reps: [RepCounter] = []
+    @Published var totalCount = 0
+    
     init(isRepcounter: Bool = false) {
         self.isRepCounter = isRepcounter
+//        self.init()
+        if isRepcounter {
+            createList()
+        }
+        
+        print("Counter", isRepCounter)
+        
     }
     
     @Published var showConfetti = false

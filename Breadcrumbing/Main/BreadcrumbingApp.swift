@@ -26,12 +26,17 @@ struct BreadcrumbingApp: App {
     }
 }
 
+struct BreadCrumbState: Codable, Hashable {
+    var breadcrumb: BreadCrumb
+    var isTimer: Bool
+}
+
 class BreadcrumsSaver {
     static var shared = BreadcrumsSaver()
     
     let defaults = UserDefaults.standard
     
-    var listOfItems: [BreadCrumb] = []
+    var listOfItems: [BreadCrumbState] = []
     var currentBreadcrumb: BreadCrumb?
     
     init() {
@@ -39,8 +44,8 @@ class BreadcrumsSaver {
     }
     
     func update(_ item: BreadCrumb) {
-        if let index = listOfItems.firstIndex(where: { $0.id == item.id }) {
-            listOfItems[index] = item
+        if let index = listOfItems.firstIndex(where: { $0.breadcrumb.id == item.id }) {
+            listOfItems[index].breadcrumb = item
             
             save()
         }
@@ -58,7 +63,7 @@ class BreadcrumsSaver {
         }
     }
     
-    func saveToList(_ breadcrumb: BreadCrumb) {
+    func saveToList(_ breadcrumb: BreadCrumbState) {
         listOfItems.append(breadcrumb)
         
         save()
@@ -66,7 +71,7 @@ class BreadcrumsSaver {
     
     func readFromSaved() {
         if let data = UserDefaults.standard.data(forKey: "breadcrumbs"),
-           let breadcrumbs = try? JSONDecoder().decode([BreadCrumb].self, from: data) {
+           let breadcrumbs = try? JSONDecoder().decode([BreadCrumbState].self, from: data) {
             listOfItems = breadcrumbs
         } else {
             print("None")

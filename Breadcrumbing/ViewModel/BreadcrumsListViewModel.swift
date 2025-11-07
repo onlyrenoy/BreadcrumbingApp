@@ -10,7 +10,7 @@ import SwiftUI
 
 @MainActor
 class BreadcrumsListViewModel: ObservableObject {
-    @Published var listOfBC: [BreadCrumb] = [] {
+    @Published var listOfBC: [BreadCrumbState] = [] {
         didSet {
             print("BC Count:",listOfBC.count)
             print(listOfBC)
@@ -20,6 +20,8 @@ class BreadcrumsListViewModel: ObservableObject {
     @Published var showDetail = false
     @Published var disableScroll = false
     @Published var textfieldText = ""
+    
+    @Published var isRepCounter = false
     
     @Published var path: NavigationPath = NavigationPath()
     

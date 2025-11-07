@@ -10,6 +10,10 @@ struct BreadCrumbCreationAlert: View {
     var ns: Namespace.ID
     @ObservedObject var viewModel: BreadcrumsListViewModel
     
+    @State var didpress = false
+    
+    
+    
     var body: some View {
         VStack {
             RoundedRectangle(cornerRadius: 20)
@@ -28,10 +32,31 @@ struct BreadCrumbCreationAlert: View {
                             .padding()
                         
                         HStack {
+                            Button {
+                                viewModel.isRepCounter = false
+                            } label: {
+                                Text("⏱️")
+                                    
+                            }
+                            .frame(width: 80, height: 40)
+                            .neuro(concave: $viewModel.isRepCounter)
+                            
+                            Button {
+                                viewModel.isRepCounter = true
+                            } label: {
+                                Text("🔁")
+                            }
+                            .frame(width: 80, height: 40)
+                            .neuro(concave: $viewModel.isRepCounter.inverted)
+
+                        }
+                        
+                        HStack {
                             Button("OK") {
                                 if !viewModel.textfieldText.isEmpty {
-                                    viewModel.listOfBC.append(BreadCrumb(title: viewModel.textfieldText))
-                                    BreadcrumsSaver.shared.saveToList(BreadCrumb(title: viewModel.textfieldText))
+                                    let bc = BreadCrumbState(breadcrumb: BreadCrumb(title: viewModel.textfieldText), isTimer: viewModel.isRepCounter)
+                                    viewModel.listOfBC.append(bc)
+                                    BreadcrumsSaver.shared.saveToList(bc)
                                 }
                                 
                                 withAnimation {

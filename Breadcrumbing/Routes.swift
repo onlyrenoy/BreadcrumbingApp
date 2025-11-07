@@ -9,7 +9,7 @@ import SwiftUI
 
 enum Routes: Hashable {
     case home
-    case detail(breadcrumb: BreadCrumb)
+    case detail(breadcrumb: BreadCrumbState)
 }
 
 @MainActor
@@ -26,7 +26,8 @@ class Router: ObservableObject {
         Group {
             switch route {
             case .home: BreadcrumsList()
-            case .detail(let bc): ContentView(breadcrumb: bc)
+            case .detail(let bc): ContentView(viewModel: BreadcrumbingViewModel(isRepcounter: bc.isTimer),
+                                              breadcrumb: bc.breadcrumb)
             }
         }
         .environmentObject(self)

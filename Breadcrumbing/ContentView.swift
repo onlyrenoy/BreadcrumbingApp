@@ -7,13 +7,28 @@
 
 import SwiftUI
 import SPConfetti
+struct BoldMonospace: ViewModifier {
+    func body(content: Content) -> some View {
+        content
+            .monospaced()
+            .foregroundStyle(Color(uiColor: SomeColors.gold))
+            .fontWeight(.bold)
+            .font(.largeTitle)
+    }
+}
+
+extension View {
+    func boldMonospaced() -> some View {
+            modifier(BoldMonospace())
+        }
+}
 
 struct ContentView: View {
     @Environment(\.scenePhase) private var scenePhase
     
     @State private var ticker = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
     
-    @StateObject var viewModel: BreadcrumbingViewModel = BreadcrumbingViewModel()
+    @ObservedObject var viewModel: BreadcrumbingViewModel
     
     @State var showAlert = false
     
@@ -23,54 +38,30 @@ struct ContentView: View {
     
     @EnvironmentObject var route: Router
     
-    
-    struct RepCounter {
-        var index: Int
-        var isSelected: Bool
-    }
-    
-    func createList() {
-        for item in 0..<50 {
-            reps.append(RepCounter(index: item, isSelected: false))
-        }
-    }
-    
-    @State var reps: [RepCounter] = []
-    @State var totalCount = 0
-    
     var body: some View {
         ZStack {
             Color.neuBackground.ignoresSafeArea()
-                .onAppear {
-                    createList()
-                }
-            if !(viewModel.isRepCounter) {
+            if viewModel.isRepCounter {
                 VStack {
                     Text(breadcrumb.title.uppercased())
-                        .monospaced()
-                        .foregroundStyle(Color(uiColor: SomeColors.gold))
-                        .fontWeight(.bold)
-                        .font(.largeTitle)
+                        .boldMonospaced()
                         Spacer()
                     
-                    Text("\(totalCount)/50") //counter
-                        .monospaced()
-                        .foregroundStyle(Color(uiColor: SomeColors.gold))
-                        .fontWeight(.bold)
-                        .font(.largeTitle)
+                    Text("\(viewModel.totalCount)/50") //counter
+                        .boldMonospaced()
                         Spacer()
                     
                     //serve un bool per aggiornamento item
                     Grid(horizontalSpacing: 30, verticalSpacing: 15) {
-                        ForEach(reps.indices, id: \.self) { mainIndex in
+                        ForEach(viewModel.reps.indices, id: \.self) { mainIndex in
                             GridRow {
                                 ForEach(0..<5) { columnIndex in
                                     let index = mainIndex * 5 + columnIndex
-                                    if index < reps.count {
+                                    if index < viewModel.reps.count {
                                         Rectangle()
-                                            .fill(reps[index].isSelected ? .green : Color.neuBackground)
+                                            .fill(viewModel.reps[index].isSelected ? .green : Color.neuBackground)
                                             .frame(width: 40, height: 40)
-                                            .neuro(concave: $reps[index].isSelected, cornerRadius: 54)
+                                            .neuro(concave: $viewModel.reps[index].isSelected, cornerRadius: 54)
                                     }
                                 }
                             }
@@ -81,16 +72,7 @@ struct ContentView: View {
                         Text("+")
                             .padding()
                             .onTapGesture {
-                                if totalCount == 50 { return }
-                                
-                                UINudgeSound.playTap()
-                                
-                                reps[totalCount].isSelected.toggle()
-                                totalCount += 1
-                                
-                                if totalCount == 50 {
-                                    viewModel.showConfetti.toggle()
-                                }
+                                viewModel.repCounterUpdate()
                             }
                     }
                     .frame(height: 54)
@@ -102,7 +84,6 @@ struct ContentView: View {
                               particles: [.arc, .heart, .star],
                               duration: 3)
                     .confettiParticle(\.velocity, 300)
-                    
                 }
             } else {
                 VStack {
@@ -135,7 +116,6 @@ struct ContentView: View {
                                             .padding(.horizontal)
                                             .foregroundStyle(viewModel.isRunning ? Color.init(uiColor: SomeColors.gold) : Color.init(uiColor: SomeColors.darkBlue))
                                     }
-                                    
                                 }
                                 .neuro(concave: $viewModel.isRunning, cornerRadius: Int(circleWidth))
                             
@@ -172,13 +152,6 @@ struct ContentView: View {
                                           particles: [.arc, .heart, .star],
                                           duration: 3)
                                 .confettiParticle(\.velocity, 300)
-                                //                            .onChange(of: viewModel.showConfetti) { oldValue, newValue in
-                                //                                if newValue == true {
-                                //                                    breadcrumb.count += 1
-                                //
-                                //                                    print("count", breadcrumb.count)
-                                //                                }
-                                //                            }
                             }
                     }
                     
@@ -200,14 +173,6 @@ struct ContentView: View {
                         .foregroundStyle(viewModel.isRunning ? Color.init(uiColor: SomeColors.darkBlue) : Color.init(uiColor: SomeColors.gold))
                     
                         .neuro(concave: $viewModel.isRunning.inverted , cornerRadius: 40)
-                    
-                    HStack {
-                        Text("+")
-                            .padding()
-                    }
-                    .frame(height: 54)
-                    .frame(maxWidth: 54)
-                    .neuro(concave: .constant(true), cornerRadius: 54)
                 }
             }
             
@@ -280,7 +245,7 @@ struct ContentView: View {
 }
 
 #Preview {
-    ContentView(breadcrumb: BreadCrumb(title: "Test"))
+    ContentView(viewModel: BreadcrumbingViewModel(isRepcounter: false), breadcrumb: BreadCrumb(title: "Test"))
     
 }
 
@@ -306,6 +271,5 @@ enum UINudgeSound {
 
     static func playTap() {
         AudioServicesPlaySystemSound(tap)
-        // or with vibration (if available): AudioServicesPlayAlertSound(tap)
     }
 }

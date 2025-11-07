@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		230994EA2EBE89DC00B97BA4 /* Neuromorphic in Frameworks */ = {isa = PBXBuildFile; productRef = 230994E92EBE89DC00B97BA4 /* Neuromorphic */; };
 		2385DF6A2EA0215700B4A603 /* SPConfetti in Frameworks */ = {isa = PBXBuildFile; productRef = 2385DF692EA0215700B4A603 /* SPConfetti */; };
 /* End PBXBuildFile section */
 
@@ -57,6 +58,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				2385DF6A2EA0215700B4A603 /* SPConfetti in Frameworks */,
+				230994EA2EBE89DC00B97BA4 /* Neuromorphic in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -126,6 +128,7 @@
 			name = Breadcrumbing;
 			packageProductDependencies = (
 				2385DF692EA0215700B4A603 /* SPConfetti */,
+				230994E92EBE89DC00B97BA4 /* Neuromorphic */,
 			);
 			productName = Breadcrumbing;
 			productReference = 2385DF262EA00FD300B4A603 /* Breadcrumbing.app */;
@@ -211,6 +214,7 @@
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
 				2385DF672EA0213B00B4A603 /* XCRemoteSwiftPackageReference "SPConfetti" */,
+				230994E82EBE89DC00B97BA4 /* XCLocalSwiftPackageReference "../Neuromorphic" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 2385DF272EA00FD300B4A603 /* Products */;
@@ -576,6 +580,13 @@
 		};
 /* End XCConfigurationList section */
 
+/* Begin XCLocalSwiftPackageReference section */
+		230994E82EBE89DC00B97BA4 /* XCLocalSwiftPackageReference "../Neuromorphic" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = ../Neuromorphic;
+		};
+/* End XCLocalSwiftPackageReference section */
+
 /* Begin XCRemoteSwiftPackageReference section */
 		2385DF672EA0213B00B4A603 /* XCRemoteSwiftPackageReference "SPConfetti" */ = {
 			isa = XCRemoteSwiftPackageReference;
@@ -588,6 +599,10 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		230994E92EBE89DC00B97BA4 /* Neuromorphic */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = Neuromorphic;
+		};
 		2385DF692EA0215700B4A603 /* SPConfetti */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 2385DF672EA0213B00B4A603 /* XCRemoteSwiftPackageReference "SPConfetti" */;
