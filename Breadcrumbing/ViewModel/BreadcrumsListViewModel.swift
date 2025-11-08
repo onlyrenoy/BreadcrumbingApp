@@ -10,12 +10,7 @@ import SwiftUI
 
 @MainActor
 class BreadcrumsListViewModel: ObservableObject {
-    @Published var listOfBC: [BreadCrumbState] = [] {
-        didSet {
-            print("BC Count:",listOfBC.count)
-            print(listOfBC)
-        }
-    }
+    @Published var listOfBC: [BreadCrumbState] = []
     @Published var selectedBC: BreadCrumb?
     @Published var showDetail = false
     @Published var disableScroll = false
@@ -38,11 +33,6 @@ class BreadcrumsListViewModel: ObservableObject {
     
     func onAppear() {
         BreadcrumsSaver.shared.readFromSaved()
-        print("-------------------------")
-        print("saver list:\n", BreadcrumsSaver.shared.listOfItems)
-        print("///////////////////////")
-        print("just list:\n", listOfBC)
-        print("-------------------------")
         listOfBC = BreadcrumsSaver.shared.listOfItems
     }
 }

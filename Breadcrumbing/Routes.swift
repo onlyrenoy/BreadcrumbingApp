@@ -17,7 +17,6 @@ class Router: ObservableObject {
     @Published var path: NavigationPath = .init()
     
     func push(_ route: Routes) {
-        print("Appending type:", type(of: route.hashValue))
         path.append(route)
     }
     
@@ -26,7 +25,7 @@ class Router: ObservableObject {
         Group {
             switch route {
             case .home: BreadcrumsList()
-            case .detail(let bc): ContentView(viewModel: BreadcrumbingViewModel(isRepcounter: bc.isTimer),
+            case .detail(let bc): BreadCrumbDetailView(viewModel: BreadcrumbingViewModel(isRepcounter: bc.isTimer),
                                               breadcrumb: bc.breadcrumb)
             }
         }

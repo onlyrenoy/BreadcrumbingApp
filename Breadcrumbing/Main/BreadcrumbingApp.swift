@@ -74,7 +74,7 @@ class BreadcrumsSaver {
            let breadcrumbs = try? JSONDecoder().decode([BreadCrumbState].self, from: data) {
             listOfItems = breadcrumbs
         } else {
-            print("None")
+            listOfItems = []
         }
     }
 }

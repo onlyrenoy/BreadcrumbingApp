@@ -6,6 +6,7 @@
 //
 import SwiftUI
 import Combine
+import Neuromorphic
 
 struct CircularTimerWithDot: View {
     //My
@@ -33,7 +34,7 @@ struct CircularTimerWithDot: View {
             ZStack {
                 // Track
                 Circle()
-                    .stroke(.gray.opacity(0.1), lineWidth: 12)
+                    .stroke(.gray.opacity(0.25), lineWidth: 12)
                     .overlay {
                         Circle()
                             .trim(from: 0, to: progress)
@@ -52,13 +53,14 @@ struct CircularTimerWithDot: View {
                             let y = radius + sin(angle) * (radius)
                             
                             Circle()
-                                .foregroundStyle(Color.neuBackground)
+                                .foregroundStyle(Color.white)
                                 .frame(width: 16, height: 16)
-                                .neuro()
+                                .neumorph(state: .base(state: .on))
                                 .position(x: x, y: y)
                                 .shadow(radius: 0.3)
                                 .animation(.linear(duration: tick), value: progress)
-                            
+                                
+                                
                         }
                         
                         .allowsHitTesting(false)

@@ -37,7 +37,6 @@ class DailyArrayViewModel: ObservableObject {
     // MARK: - Reset Array
     func resetItems() {
         items.removeAll()
-        print("✅ Array reset at start of new day")
         BreadcrumsSaver.shared.resetList()
         UserDefaults.standard.set(Date(), forKey: lastResetKey)
     }

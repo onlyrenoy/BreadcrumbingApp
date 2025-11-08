@@ -14,11 +14,7 @@ class BreadcrumbingViewModel: ObservableObject {
     
     @Published var totalSeconds: Int = 5 * 60
     @Published var remaining: Int = 5 * 60
-    @Published var isRunning: Bool = false {
-        didSet {
-            print("tapped here", #line)
-        }
-    }
+    @Published var isRunning: Bool = false
     @Published var endDate: Date? = nil
     
     @Published var celebrations: [String] = [] {
@@ -35,7 +31,14 @@ class BreadcrumbingViewModel: ObservableObject {
     }
     
     func repCounterUpdate() {
-        if totalCount == 50 { return }
+        if totalCount == 50 {
+            celebrationCount.append("★")
+            if var bc = BreadcrumsSaver.shared.currentBreadcrumb {
+                bc.count = celebrationCount
+                BreadcrumsSaver.shared.update(bc)
+            }
+            return
+        }
         
         UINudgeSound.playTap()
         
@@ -54,13 +57,10 @@ class BreadcrumbingViewModel: ObservableObject {
     
     init(isRepcounter: Bool = false) {
         self.isRepCounter = isRepcounter
-//        self.init()
+        
         if isRepcounter {
             createList()
         }
-        
-        print("Counter", isRepCounter)
-        
     }
     
     @Published var showConfetti = false
@@ -89,8 +89,6 @@ class BreadcrumbingViewModel: ObservableObject {
                 BreadcrumsSaver.shared.update(bc)
             }
         }
-        
-        print(celebrationCount)
     }
     
     @Published var fiveChances = ["", "", "", "", ""]
@@ -102,15 +100,6 @@ class BreadcrumbingViewModel: ObservableObject {
         if celebrations.count % 5 == 0 {
             fiveChances = ["", "", "", "", ""]
         }
-    }
-    
-    
-    func save() {
-        //save title
-        //save number of celebrations
-            //count number of celebrations and mod 5 for a star
-            //else
-            //number of celebrations
     }
     
     // MARK: - UI Actions

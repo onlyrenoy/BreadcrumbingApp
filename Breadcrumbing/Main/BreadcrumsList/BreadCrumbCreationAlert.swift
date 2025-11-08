@@ -5,6 +5,7 @@
 //  Created by Renoy Chowdhury on 21/10/25.
 //
 import SwiftUI
+import Neuromorphic
 
 struct BreadCrumbCreationAlert: View {
     var ns: Namespace.ID
@@ -26,73 +27,71 @@ struct BreadCrumbCreationAlert: View {
                         TextField("Add Breadcrumb", text: $viewModel.textfieldText)
                             .monospaced()
                             .padding()
-                            .border(.background)
                             .cornerRadius(20)
-                            .neuro(concave: .constant(false))
+
+                            .neumorph(state: .base(state: .off))
                             .padding()
                         
                         HStack {
-                            Button {
+                            Text("⏱️")
+                            .frame(width: 80, height: 40)
+                            .neumorph(didPress: $viewModel.isRepCounter,
+                                      state: .animated(tappable: {
                                 viewModel.isRepCounter = false
-                            } label: {
-                                Text("⏱️")
-                                    
-                            }
-                            .frame(width: 80, height: 40)
-                            .neuro(concave: $viewModel.isRepCounter)
+                            }))
                             
-                            Button {
-                                viewModel.isRepCounter = true
-                            } label: {
-                                Text("🔁")
-                            }
+                            Text("🔁")
                             .frame(width: 80, height: 40)
-                            .neuro(concave: $viewModel.isRepCounter.inverted)
+                            .neumorph(didPress: $viewModel.isRepCounter.inverted,
+                                      state: .animated(tappable: {
+                                viewModel.isRepCounter = true
+                            }))
 
                         }
                         
                         HStack {
-                            Button("OK") {
-                                if !viewModel.textfieldText.isEmpty {
-                                    let bc = BreadCrumbState(breadcrumb: BreadCrumb(title: viewModel.textfieldText), isTimer: viewModel.isRepCounter)
-                                    viewModel.listOfBC.append(bc)
-                                    BreadcrumsSaver.shared.saveToList(bc)
-                                }
-                                
-                                withAnimation {
-                                    viewModel.textfieldText = ""
-                                    viewModel.showAddBreadcrumbAlert(false)
+                            Text("OK")
+                                .monospaced()
+                                .tint(.black)
+                                .padding()
+                                .neumorph(state: .base(state: .on, tappable: {
+                                    if !viewModel.textfieldText.isEmpty {
+                                        let bc = BreadCrumbState(breadcrumb: BreadCrumb(title: viewModel.textfieldText), isTimer: viewModel.isRepCounter)
+                                        viewModel.listOfBC.append(bc)
+                                        BreadcrumsSaver.shared.saveToList(bc)
+                                    }
                                     
-                                }
-                            }
-                            .monospaced()
-                            .tint(.black)
-                            .padding()
-                            .neuro()
+                                    withAnimation {
+                                        viewModel.textfieldText = ""
+                                        viewModel.showAddBreadcrumbAlert(false)
+                                    }
+                                }))
+//                            .neuro()
                             
                             
                             Spacer()
-                            Button("Cancel") {
+                            
+                            Text("Cancel")
+                            .monospaced()
+                            .foregroundStyle(.red)
+                            .padding()
+                            .neumorph(state: .base(state: .on, tappable: {
                                 withAnimation {
                                     viewModel.textfieldText = ""
                                     viewModel.showAddBreadcrumbAlert(false)
                                 }
-                            }
-                            .monospaced()
-                            .tint(.red)
-                            .padding()
-                            .neuro()
+                            }))
                         }
                         .padding()
                     }
                 }
-                .onTapGesture {
-                    withAnimation {
-                        viewModel.textfieldText = ""
-                        viewModel.showAddBreadcrumbAlert(false)
-                    }
-                    
-                }
+//                .onTapGesture {
+//                    withAnimation {
+//                        viewModel.textfieldText = ""
+//                        viewModel.showAddBreadcrumbAlert(false)
+//                    }
+//                    
+//                }
         }
         .frame(height: 300)
         .neuro()

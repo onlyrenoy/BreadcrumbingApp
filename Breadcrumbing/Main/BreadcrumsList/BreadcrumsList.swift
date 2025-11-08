@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import Neuromorphic
 
 struct BreadcrumsList: View {
     @Namespace var namespace

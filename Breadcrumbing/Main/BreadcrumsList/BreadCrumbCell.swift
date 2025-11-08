@@ -7,6 +7,7 @@
 
 
 import SwiftUI
+import Neuromorphic
 
 struct BreadCrumbCell: View {
     var breadCrumb: BreadCrumb
@@ -28,8 +29,9 @@ struct BreadCrumbCell: View {
                            .padding(.trailing)
                    }
                }
-               .neuro(autoReset: true)
+               
                .background { Color.clear }
+               .neuro()
                .padding(.horizontal)
        }
     }
